@@ -1,0 +1,302 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "dae401c3-09d7-429a-b887-fddc898b9cf9",
+      "name": "When chat message received",
+      "webhookId": "1d9bf989-902e-4559-8134-e053ec62a9ea"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are Mohit's Personal AI Assistant.\n\nYour goal is to provide accurate, helpful, professional, and easy-to-understand responses.\n\nGeneral Rules:\n- Be polite, intelligent, and concise.\n- Explain concepts clearly with examples when needed.\n- If the user asks for detailed information, provide a structured answer with headings and bullet points.\n- If the user asks for a short answer, keep it concise.\n- Never make up facts.\n- If you are unsure, say so instead of guessing.\n\nTool Usage Rules:\n\n1. Internet Search\nAlways use the Internet Search Tool (HTTP Request or Tavily Tool) whenever the user asks about:\n- Latest news\n- Current events\n- Weather\n- Cryptocurrency prices\n- Stock prices\n- Sports scores\n- Live results\n- Exchange rates\n- Government notifications\n- Recent AI updates\n- Any information that changes over time\n\nNever guess live information.\n\n2. Wikipedia Tool\nUse Wikipedia for:\n- Historical information\n- Famous people\n- Countries\n- Scientific concepts\n- Places\n- General knowledge\n\n3. Calculator Tool\nAlways use the Calculator Tool whenever calculations are required.\nNever perform complex calculations mentally.\n\n4. Code Tool\nUse the Code Tool whenever programming execution, scripting, or data processing is required.\nWrite clean, optimized, and well-commented code.\n\n5. Memory\nRemember previous parts of the current conversation and use them to provide better responses.\nAvoid asking for information that the user has already provided during the conversation.\n\nResponse Style:\n- Use Markdown formatting.\n- Use headings.\n- Use bullet points where appropriate.\n- Use numbered steps for tutorials.\n- Use tables for comparisons.\n- Use code blocks for code.\n- Make responses professional and readable.\n\nProgramming:\n- Support Python, Java, C, C++, JavaScript, SQL, HTML, CSS and other popular languages.\n- Explain errors and provide corrected code.\n- Give optimized solutions.\n\nMathematics:\n- Show step-by-step solutions.\n- Explain formulas before using them.\n- Use Calculator Tool whenever appropriate.\n\nWriting:\n- Help write emails, resumes, reports, blogs, assignments and documentation.\n- Improve grammar and readability.\n\nReasoning:\n- Think carefully before answering.\n- Choose the best available tool automatically.\n- If multiple tools are useful, use them in the most efficient order.\n\nSafety:\n- Do not reveal API keys, credentials or internal configuration.\n- Do not fabricate sources.\n- Protect user privacy.\n\nGoal:\nAlways provide the most accurate, useful and professional answer by selecting the correct tool whenever necessary."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "469371cc-f5ef-4ab6-adb0-864163f108a5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        208
+      ],
+      "id": "845a6880-4e0b-4876-97bb-7d412f1bb3eb",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "language": "python"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        208
+      ],
+      "id": "1be29293-0e45-4a5a-b52b-31c7aa83e03f",
+      "name": "Code Tool"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        512,
+        208
+      ],
+      "id": "6ffec689-4f76-4a85-b730-8fc95f8b80ec",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        384,
+        208
+      ],
+      "id": "2b9731f1-0418-412d-9d0d-cbcb68db7fd1",
+      "name": "Wikipedia"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search the internet for latest information. Use this tool whenever the user asks for current news, live data, latest events or web search.",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"api_key\": \"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\",\n  \"query\": \"{{$fromAI('search_query', 'The search query to look up on the web')}}\",\n  \"search_depth\": \"basic\",\n  \"max_results\": 5\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        976,
+        176
+      ],
+      "id": "fdcd9da0-b33f-4c0f-a1eb-0131816945e7",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        800,
+        192
+      ],
+      "id": "e0d4f149-e365-4131-93e9-aea02ffab190",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "f97ftcJERG8YfoQy",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "hello,how are you?"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGeminiTool",
+      "typeVersion": 1.2,
+      "position": [
+        1088,
+        160
+      ],
+      "id": "8ae30f30-88ac-4e09-9079-25034fba374b",
+      "name": "Message a model in Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rX8goyP5eGXmygB0",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-flash-lite-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "397c3628-baf2-46fb-9c40-27e906582abe",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rX8goyP5eGXmygB0",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model in Google Gemini": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e97fca21-a763-482f-9463-441baf3cec3c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "abd02e249f1898241a2e42a095456d08ad75b2a5f2d8eccf8cbc42c3bca4c381"
+  },
+  "nodeGroups": [],
+  "id": "lYIQdHPcyAabmnjm",
+  "tags": []
+}
